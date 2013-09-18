@@ -10,6 +10,7 @@ AM_CPPFLAGS+=-DDUNE_GRID_EXAMPLE_GRIDS_PATH=\"$(top_srcdir)/doc/grids/\"
 if AMIRAMESH
 if PSURFACE
 ALLTESTS += amirameshtest
+ALLTESTS += psurfacetest
 endif
 endif
 
@@ -101,6 +102,21 @@ gmshtest_alugrid_SOURCES  = gmshtest.cc
 gmshtest_alugrid_CPPFLAGS = $(AM_CPPFLAGS) $(ALUGRID_CPPFLAGS) $(GRAPE_CPPFLAGS) $(GRIDDIM_CPPFLAGS)
 gmshtest_alugrid_LDFLAGS  = $(AM_LDFLAGS)	 $(ALUGRID_LDFLAGS)	 $(GRAPE_LDFLAGS)
 gmshtest_alugrid_LDADD    =	$(GRAPE_LIBS)	 $(ALUGRID_LIBS)		 $(LDADD)
+
+psurfacetest_SOURCES = psurfacetest.cc
+psurfacetest_CPPFLAGS = $(AM_CPPFLAGS)		\
+	$(AMIRAMESH_CPPFLAGS)			\
+	$(UG_CPPFLAGS)				\
+	$(PSURFACE_CPPFLAGS)
+psurfacetest_LDFLAGS = $(AM_LDFLAGS)		\
+	$(AMIRAMESH_LDFLAGS)			\
+	$(UG_LDFLAGS)				\
+	$(PSURFACE_LDFLAGS)
+psurfacetest_LDADD =				\
+	$(PSURFACE_LIBS)			\
+	$(UG_LIBS)				\
+	$(AMIRAMESH_LIBS)			\
+	$(LDADD)
 
 starcdreadertest_SOURCES = starcdreadertest.cc
 starcdreadertest_CPPFLAGS = $(AM_CPPFLAGS)	\

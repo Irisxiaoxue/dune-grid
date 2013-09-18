@@ -10,12 +10,13 @@
 
 #if HAVE_PSURFACE
 #include <psurface/PSurface.h>
-#include "psurface/AmiraMeshIO.h"
+#include <psurface/AmiraMeshIO.h>
+#include <psurface/psurface_convert.h>
 
 #if HAVE_AMIRAMESH
 #include <amiramesh/AmiraMesh.h>
 #endif
-
+#include <string.h>
 
 namespace Dune {
 
@@ -107,6 +108,19 @@ namespace Dune {
      */
     static shared_ptr<PSurfaceBoundary<dim> > read(const std::string& filename)
     {
+      if( std::strstr(filename.c_str(),".h5")  && dim == 2) 
+      {
+          PSURFACE_NAMESPACE PSurface<2,float>* newDomain = new PSURFACE_NAMESPACE PSurface<2,float>;
+
+          PSURFACE_NAMESPACE PsurfaceConvert<float,2> pconvert = PSURFACE_NAMESPACE PsurfaceConvert<float,2>(filename, 1);
+          PSURFACE_NAMESPACE Surface* surf = new PSURFACE_NAMESPACE Surface;
+          pconvert.initPsurface(newDomain, surf, 0);
+          if (!newDomain)
+          DUNE_THROW(IOError, "An error has occured while reading " << filename);
+          return make_shared<PSurfaceBoundary<dim> >(newDomain);
+      }
+      else if( std::strstr(filename.c_str(),".am") || std::strstr(filename.c_str(),".par")) 
+      {
 #if HAVE_AMIRAMESH
       std::auto_ptr<AmiraMesh> am(AmiraMesh::read(filename.c_str()));
 
@@ -123,7 +137,10 @@ namespace Dune {
 #else
       DUNE_THROW(IOError, "The given file is not in a supported format!");
 #endif
-    }
+      }
+      else
+        printf(" we could not read this type\n");
+    } 
 
   private:
 
